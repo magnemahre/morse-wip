@@ -48,13 +48,11 @@ int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *im
     integer i1;
 
     /* Local variables */
-    static int i, k, ip, ieq, ltr, ndel, retstat;
-    static char wait[1];
-    static int isavg, init=0;
-    static real xsavg, xmmax, xnmax;
-    static int ndlavg;
-    static real xdlavg;
-    static char *chrp; 
+    static int init=0;
+    static real xsavg=0, xmmax=0, xnmax=0;
+    static real xdlavg=0;
+        
+    int k, ip, ltr, ndel, retstat;
 
 /*    THIS SUBROUTINE STORES THE SAVED NODES AT EACH */
 /*    STAGE AND FORMS THE TREE OF SAVED PATHS LINKING */
@@ -72,7 +70,7 @@ int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *im
     /* initialize variables*/
  	if (init ==0) {
  		init = 1; 
-		for (i=0; i< NDELAY; i++)
+		for (int i=0; i< NDELAY; i++)
 			ltrsv[i] = 0;
 		for (int row =0; row < 25; row++) {
 			ipnod[row] = 1;
@@ -89,8 +87,8 @@ int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *im
 	retstat = 1;
     ++ncall;
     if (iend == 1) {
-		isavg = xsavg;
-		ndlavg = xdlavg;
+		//isavg = xsavg;  // isavg is never used
+		// ndlavg = xdlavg; // ndlavg is never used
 		iend = 0;
 		printf("\nAVG # OF PATHS SAVED:%4.2f,AVG DECODE DELAY:%4.2f)", xsavg, xdlavg);
 		printf("\nPERCENT OF TIME PATHS = 25: %3.2f, PERCENT OF TIME DELAY = 200: %3.2f", xmmax, xnmax);
@@ -115,7 +113,7 @@ int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *im
 		n = 1;
     }
     i1 = *isave;
-    for (i = 1; i <= i1; ++i) {
+    for (int i = 1; i <= i1; ++i) {
 //		pthtrl[n + i * NDELAY-NDELAY-1] = pathsv[i];
 		pthtrl[i-1][n-1] = pathsv[i];
 		
@@ -126,7 +124,7 @@ int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *im
 /* 	PERFORM DYNAMIC PROGRAM ROUTINE TO FIND CONVERGENT PATH: */
     k = 0;
     i1 = *isave;
-    for (i = 1; i <= i1; ++i) {
+    for (int i = 1; i <= i1; ++i) {
 		ipnod[i - 1] = i;
     }
 L190:
@@ -137,8 +135,8 @@ L190:
 
 /* 	IF IP EQUALS INDEX OF HIGHEST PROBABILITY NODE, STORE NODE TO IPMAX */
     i1 = *isave;
-    for (ip = 1; ip <= i1; ++ip) {
-		i = n - k + 1;
+    for (int ip = 1; ip <= i1; ++ip) {
+		int i = n - k + 1;
 		if (i <= 0) {
 			i = ndelay + i;
 		}
@@ -151,7 +149,7 @@ L190:
 
 /* 	IF ALL NODES ARE EQUAL,THEN PATHS CONVERGE: */
     i1 = *isave;
-    for (ieq = 2; ieq <= i1; ++ieq) {
+    for (int ieq = 2; ieq <= i1; ++ieq) {
 		if (ipnod[0] != ipnod[ieq - 1]) {
 			goto L190;
 		}
@@ -166,20 +164,19 @@ L190:
 		goto L800;
     }
 /* 	IF POINT OF CONVERGENCE OCCURS AT SAME DELAY AS LAST CALL, THEN TRANSLATE: */
-    if (ndel != ndelst) {
-		goto L350;
-    }
-    i = n - ndel + 1;
-    if (i <= 0) {
+    if (ndel == ndelst) {
+        int i = n - ndel + 1;
+        if (i <= 0) {
 		i = ndelay + i;
-    }
+        }
 //    ltr = lmdsav[i + ipnod[0] * NDELAY-NDELAY-1];
-    ltr = lmdsav[ipnod[0]-1][i-1];
+        ltr = lmdsav[ipnod[0]-1][i-1];
 #ifdef DEBUG
 printf("\nSAME DELAY AS LAST: %d",ltr);
 #endif
-    retstat = transl_(&ltr);
-    goto L800;
+        retstat = transl_(&ltr);
+        goto L800;
+    }
 
 /* 	OTHERWISE,POINT OF CONVERGENCE HAS OCCURED */
 /* 	EARLIER ON THIS CALL, SO NEED TO TRANSLATE */
@@ -189,9 +186,9 @@ L350:
     kd = 0;
     ip = ipnod[0];
     i1 = ndelst;
-    for (k = ndel; k <= i1; ++k) {
+    for (int k = ndel; k <= i1; ++k) {
 		++kd;
-		i = n - k + 1;
+		int i = n - k + 1;
 		if (i <= 0) {
 			i = ndelay + i;
 		}
@@ -209,7 +206,7 @@ L350:
 /* 	WERE OBTAINED FROM THE TRELLIS IN REVERSE; */
 /* 	TRANSLATE EACH: */
     i1 = kd;
-    for (i = 1; i <= i1; ++i) {
+    for (int i = 1; i <= i1; ++i) {
 		ltr = ltrsv[kd - i];
 #ifdef DEBUG
 		printf("\nIN REVERSE ORDER: %d",ltr);
@@ -223,7 +220,8 @@ L700:
 /* 	DELAY, SO TRANSLATE WHAT IS ON HIGHEST */
 /* 	PROBABILITY PATH: */
     ndel = ndelay;
-    i = n - ndelay + 1;
+{
+    int i = n - ndelay + 1;
     if (i <= 0) {
 		i = ndelay + i;
     }
@@ -235,12 +233,12 @@ printf("\nHIGHEST PROB: %d", ltr);
     retstat = transl_(&ltr);
 /* 	PRUNE AWAY NODES WHICH ARE NOT ON THIS PATH: */
     i1 = *isave;
-    for (k = 1; k <= i1; ++k) {
+    for (int k = 1; k <= i1; ++k) {
 		if (ipnod[k - 1] != *ipmax) {
 			lambda[k] = 0;
 		}
     }
-
+}
 L800:
     ndelst = ndel;
     return retstat;
