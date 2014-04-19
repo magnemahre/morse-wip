@@ -54,10 +54,6 @@ int morse::noise_(double zin, real *rn, real *z)
     /* System generated locals */
     integer i1;
 
-    /* Local variables */
-    static integer i;
-    static real ymin;
-
 
 /* 	THIS SUBROUTINE ESTIMATES THE NOISE POWER IN THE */
 /* 	ENVELOPE DETECTED OUTPUT FOR USE BY THE KALMAN */
@@ -82,33 +78,28 @@ int morse::noise_(double zin, real *rn, real *z)
     if (kks >= 50) {
 	kks = 50;
     }
-    if (kks <= 2) {
-	goto L10;
+    if (kks > 2) {
+        ylong[kl - 1] = zin;
+        yshort[ks - 1] = zin;
+        ymin1 = zin;
+        ymin2 = zin;
     }
-    ylong[kl - 1] = zin;
-    yshort[ks - 1] = zin;
-    ymin1 = zin;
-    ymin2 = zin;
-L10:
+
     i1 = kkl;
-    for (i = 1; i <= i1; ++i) {
+    for (int i = 1; i <= i1; ++i) {
 	if (ylong[i - 1] > ymin1) {
-	    goto L100;
+	    continue;
 	}
 	ymin1 = ylong[i - 1];
-L100:
-	;
     }
     i1 = kks;
-    for (i = 1; i <= i1; ++i) {
+    for (int i = 1; i <= i1; ++i) {
 	if (yshort[i - 1] > ymin2) {
-	    goto L200;
+	    continue;
 	}
 	ymin2 = yshort[i - 1];
-L200:
-	;
     }
-    ymin = ymin1;
+    real ymin = ymin1;
     if (ymin2 < ymin1) {
 	ymin = ymin2;
     }
