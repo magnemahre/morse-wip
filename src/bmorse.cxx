@@ -342,7 +342,7 @@ void process_data(double x)
 //	if (zout > 1.0) zout = 1.0; 
 //	if (zout < 0.0) zout = 0.0;
 	
-	retstat = mp->proces_(&zout, &rn, &xhat, &px, &elmhat, &spdhat, &imax, &pmax, params.speed);
+	retstat = mp->proces_(zout, rn, &xhat, &px, &elmhat, &spdhat, &imax, &pmax);
 	if (params.print_variables) 
 		printf("\n%d\t%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f",(int)retstat,(int)imax,(int)elmhat,(int)xhat,x,px,pmax,spdhat,rn,zout); 
 	

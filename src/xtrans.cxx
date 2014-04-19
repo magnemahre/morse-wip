@@ -23,7 +23,7 @@
 #include "bmorse.h"
 #include <math.h>
 
-doublereal morse::xtrans_(integer *ielem, real *d0, integer *irate)
+doublereal morse::xtrans_(const integer ielem, const real d0, const integer irate)
 {
     /* Initialized data */
 
@@ -43,13 +43,13 @@ doublereal morse::xtrans_(integer *ielem, real *d0, integer *irate)
 
 /* 	SCALE DURATION AND OBTAIN DENSITY PARAMETER: */
 
-    int mscale = kimap[(0 + (0 + ((*ielem - 1) << 2))) / 4];
-    real rscale = 1200.f / *irate;
-    real b0 = *d0 / (mscale * rscale);
-    real b1 = (*d0 + 5.f) / (mscale * rscale);
+    int mscale = kimap[(0 + (0 + ((ielem - 1) << 2))) / 4];
+    real rscale = 1200.f / irate;
+    real b0 = d0 / (mscale * rscale);
+    real b1 = (d0 + 5.f) / (mscale * rscale);
     
     real alpha;
-    switch (*ielem) {
+    switch (ielem) {
     case 6:
 	    alpha = aparm[2] * 14.f;
 	    break;

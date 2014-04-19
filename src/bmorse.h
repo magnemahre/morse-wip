@@ -60,11 +60,11 @@ class morse {
 protected:
 	int initl_(void);
 	int likhd_(const real z, const real rn, const integer ip, const integer lambda, const real dur, const integer ilrate, real *p, real *lkhd);
-	int path_(integer *ip, integer *lambda, real *dur, integer *ilrate, integer *lamsav, real *dursav, integer *ilrsav);
-	doublereal spdtr_(integer *isrt, integer *ilrt, integer *iselm, integer *ilelm);
-	int ptrans_(integer *kelem, integer *irate, integer *lambda, integer *ilrate, real *ptrx, real *psum, real *pin, integer *n);
-	int trprob_(integer *ip, integer *lambda, real *dur, integer *ilrate, real *p);
-	int transl_(int *ltr);
+	int path_(const integer ip, const integer lambda, const real dur, const integer ilrate, integer *lamsav, real *dursav, integer *ilrsav);
+	doublereal spdtr_(const integer isrt, const integer ilrt, const integer iselm, const integer ilelm);
+	int ptrans_(const integer kelem, const integer irate, const integer lambda, const integer ilrate, const real ptrx, real *psum, real *pin, const integer n);
+	int trprob_(const integer ip, const integer lambda, const real dur, integer ilrate, real *p);
+	int transl_(const int ltr);
 	int trelis_(const integer isave, integer *pathsv, integer *lambda, const integer imax, integer *ipmax);
         int kalfil_(const real z, const integer ip, const real rn,
             const integer ixs, const integer kelem, const integer jnode, 
@@ -75,20 +75,23 @@ protected:
 	int model_(const real dur, const integer , const integer, const integer , real *, real *, real *);
 	int probp_(real *, real *, integer *, real *);
 	int  sprob_(real *, integer *, integer *, real *, integer *, real *, real *);
-	doublereal xtrans_(integer *, real *, integer *);
+	doublereal xtrans_(const integer ielem, const real d0, const integer irate);
 
 
 	const integer isx[6] = { 1, 1, 0, 0, 0, 0 };
+
 	const real rtrans[2][5]	=  { 
 		{ .1f,  .2f, .4f, .2f, .1f},
 		{ .15f, .2f, .3f, .2f, .15f}}/* was [5][2] */;
+
 	const integer mempr[6][6] = {
 		{0, 0, 1, 2, 1, 2}, 
 		{0, 0, 1, 2, 1, 2}, 
 		{1, 1, 0, 0, 0, 0}, 
 		{1, 1, 0, 0, 0, 0}, 
 		{1, 1, 0, 0, 0, 0},
-		{1, 1, 0, 0, 0, 0}}	/* was [6][6] */;
+		{1, 1, 0, 0, 0, 0}};
+
 	const integer memdel[6][6] = { 
 		{0, 0, 2, 2, 5, 10}, 
 		{0, 0, 2, 2, 5, 10}, 
@@ -96,31 +99,8 @@ protected:
 		{2, 2, 0, 0, 0, 0}, 
 		{2, 2, 0, 0, 0, 0}, 
 		{2, 2, 0, 0, 0, 0}}	/* was [6][6] */;
-	integer memfcn[2400];
-	const real elemtr[6][16] = { 
-		{.55f, .5f, .5f, .5f, .55f, .5f, .5f, .5f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}, 
-		{.45f, .5f, .5f, .5f, .45f, .5f, .5f, .5f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}, 
-		{0.f, 0.f, 0.f, 0.f, 0.f,  0.f, 0.f, 0.f, .581f, .54f, .923f, .923f, .923f, .923f, .95f, .95f}, 
-		{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, .335f, .376f, .062f, .062f, .062f, .062f, .04f, .04f}, 
-		{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, .069f, .069f, .012f, .012f, .012f, .012f, .009f, .009f}, 
-		{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, .015f, .015f, .003f, .003f, .003f, .003f, .001f, .001f} }	/* was [16][6] */;
 
-
-	integer ielmst[400];
-	integer ilami[16];
-	integer ilamx[6];
-
-
-    real ykkip[25];
-    real pkkip[25];
-    real ykksv[750]; 
-    real pkksv[750];
-
-    
-public: 
-	morse()
-	:
-	memfcn { 
+	const integer memfcn[2400] = { 
 /*k=0*/ 9, 11, 13, 15, 9, 11, 13, 15, 9, 0, 11, 0, 13, 0, 15, 0, 0, 
 	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -238,8 +218,19 @@ public:
 	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	ielmst { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 0, 0,
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	;
+	const real elemtr[6][16] = { 
+		{.55f, .5f, .5f, .5f, .55f, .5f, .5f, .5f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}, 
+		{.45f, .5f, .5f, .5f, .45f, .5f, .5f, .5f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}, 
+		{0.f, 0.f, 0.f, 0.f, 0.f,  0.f, 0.f, 0.f, .581f, .54f, .923f, .923f, .923f, .923f, .95f, .95f}, 
+		{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, .335f, .376f, .062f, .062f, .062f, .062f, .04f, .04f}, 
+		{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, .069f, .069f, .012f, .012f, .012f, .012f, .009f, .009f}, 
+		{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, .015f, .015f, .003f, .003f, .003f, .003f, .001f, .001f} }	/* was [16][6] */;
+
+
+	const integer ielmst[400] =  { 
+             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 0, 0,
 	     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -257,9 +248,21 @@ public:
 	     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	     0, 0, 0, 0, 0, 0, 0, 0},
-	ilami { 3, 4, 5, 6, 3, 4, 5, 6, 1, 2, 1, 2, 1, 2, 1, 2},
-	ilamx { 1, 1, 0, 0, 0, 0 },
+	     0, 0, 0, 0, 0, 0, 0, 0};
+	const integer ilami[16] = {
+            3, 4, 5, 6, 3, 4, 5, 6, 1, 2, 1, 2, 1, 2, 1, 2};
+	const integer ilamx[6] =  { 1, 1, 0, 0, 0, 0 };
+
+
+    real ykkip[25];
+    real pkkip[25];
+    real ykksv[750]; 
+    real pkksv[750];
+
+    
+public: 
+	morse()
+	:	
 	ykkip { .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, 
 	    .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f, .5f},
 	pkkip { .1f, .1f, .1f, .1f, .1f, .1f, .1f, .1f, .1f, .1f, .1f, .1f, .1f, 
@@ -270,5 +273,5 @@ public:
 	~morse();
 	
 	int noise_(double, real *, real *);
-	int proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat, real *spdhat, integer *imax, real *pmax, int spd);
+	int proces_(const real z, const real rn, integer *xhat, real *px, integer *elmhat, real *spdhat, integer *imax, real *pmax);
 };

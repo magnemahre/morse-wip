@@ -24,7 +24,7 @@
 
 
 
-int morse::ptrans_(integer *kelem, integer *irate, integer *lambda, integer *ilrate, real *ptrx, real *psum, real *pin, integer *n)
+int morse::ptrans_(const integer kelem, const integer irate, const integer lambda, const integer ilrate, const real ptrx, real *psum, real *pin, const integer n)
 {
 	real pelem, prate;
 
@@ -50,14 +50,14 @@ int morse::ptrans_(integer *kelem, integer *irate, integer *lambda, integer *ilr
     --pin;
 
     /* Function Body */
-    if (*kelem != ilami[ielmst[*lambda - 1] - 1]) {
+    if (kelem != ilami[ielmst[lambda - 1] - 1]) {
 		goto L100;
     }
-    pin[*n] = *ptrx;
+    pin[n] = ptrx;
 
 /* 	HOWEVER, IF CURRENT DATA RATE STATE  = 3, THEN TRANS PROB = 0 ... WHY ? */
-    if (*irate != 3) {
-		pin[*n] = 0.f;
+    if (irate != 3) {
+		pin[n] = 0.f;
     }
     goto L200;
 
@@ -65,13 +65,13 @@ int morse::ptrans_(integer *kelem, integer *irate, integer *lambda, integer *ilr
 /* 	OBTAIN ELEM TRANS PROBS TABLE: */
 
 L100:
-    pelem = elemtr[*kelem-1][ielmst[*lambda - 1]-1];
+    pelem = elemtr[kelem-1][ielmst[lambda - 1]-1];
 /* 	NEXT COMPUTE ELEM-CONDITIONAL SPEED TRANS PROB: */
-    prate = spdtr_(irate, ilrate, kelem, &ilami[ielmst[*lambda - 1] - 1]);
+    prate = spdtr_(irate, ilrate, kelem, ilami[ielmst[lambda - 1] - 1]);
 /* 	TRANS IS THE PRODUCT: */
-    pin[*n] = (1.f - *ptrx) * pelem * prate;
+    pin[n] = (1.f - ptrx) * pelem * prate;
 L200:
-    *psum += pin[*n];
+    *psum += pin[n];
     return 0;
 } /* ptrans_ */
 

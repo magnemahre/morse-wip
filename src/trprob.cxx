@@ -23,7 +23,7 @@
 #include "bmorse.h"
 #include <stdio.h>
 
-int morse::trprob_(integer *ip, integer *lambda, real *dur, integer *ilrate, real *p)
+int morse::trprob_(const integer ip, const integer lambda, const real dur, const integer ilrate, real *p)
 {
     
     static real pin[30];
@@ -48,16 +48,16 @@ int morse::trprob_(integer *ip, integer *lambda, real *dur, integer *ilrate, rea
     p -= 26;
 
     /* Function Body */
-    if (*lambda == 0) {
+    if (lambda == 0) {
 		for (int n = 1; n <= 30; ++n) {
-			p[*ip + n * 25] = 0.f;
+			p[ip + n * 25] = 0.f;
 		}
 		return 0;
     }
 
-    integer ielem = ilami[ielmst[*lambda - 1] - 1];
+    integer ielem = ilami[ielmst[lambda - 1] - 1];
 /* 	COMPUTE KEYSTATE TRANSITION PROBABILITY: */
-    real ptrx = xtrans_(&ielem, dur, ilrate);
+    real ptrx = xtrans_(ielem, dur, ilrate);
 
 /* 	FOR EACH STATE, COMPUTE STATE TRANSITION PROBABILITY: */
     real psum = 0.f;
@@ -66,7 +66,7 @@ int morse::trprob_(integer *ip, integer *lambda, real *dur, integer *ilrate, rea
 			integer n = (i - 1) * 6 + k;
 			integer kelm = k;
 			integer irate = i;
-			ptrans_(&kelm, &irate, lambda, ilrate, &ptrx, &psum, pin, &n);
+			ptrans_(kelm, irate, lambda, ilrate, ptrx, &psum, pin, n);
 		}
     }
     if (psum ==0.0) {
@@ -75,7 +75,7 @@ int morse::trprob_(integer *ip, integer *lambda, real *dur, integer *ilrate, rea
     }
 
     for (int n = 1; n <= 30; ++n) {
-		p[*ip + n * 25] = pin[n - 1] / psum;
+		p[ip + n * 25] = pin[n - 1] / psum;
     }
 
     return 0;

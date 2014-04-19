@@ -22,22 +22,25 @@
 
 #include "bmorse.h"
 
-int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat,  real *spdhat, integer *imax, real *pmax, int spd)
+int morse::proces_(const real z, const real rn, integer *xhat, real *px, integer *elmhat,  real *spdhat, integer *imax, real *pmax)
 {
     /* Initialized data */
+    const int PATH_SAVED = 25;
 
-    static integer isave = 25;
-    static integer lambda[25]; 
-	static integer ilrate[25]; 
-    static real dur[25];
-    static integer pathsv[25]; 
-    static integer sort[25];
+    static integer isave = PATH_SAVED;
+    static integer lambda[PATH_SAVED]; 
+    static integer ilrate[PATH_SAVED]; 
+    static real dur[PATH_SAVED];
+    static integer pathsv[PATH_SAVED]; 
+    static integer sort[PATH_SAVED];
     
-    static real p[750];
-    static integer lamsav[750];
-    static real dursav[750];
-    static integer ilrsav[750];
-    static real pin[750]	/* was [25][30] */, lkhd[750];
+    const int LIKELYHOODS = 750;
+    
+    static real p[LIKELYHOODS];
+    static integer lamsav[LIKELYHOODS];
+    static real dursav[LIKELYHOODS];
+    static integer ilrsav[LIKELYHOODS];
+    static real pin[LIKELYHOODS]	/* was [25][30] */, lkhd[750];
 
 
     /* Local variables */
@@ -97,13 +100,13 @@ int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat, 
 
 
 	if (init) {
-		for(int i=0;i<25;i++) {
+		for(int i=0;i<PATH_SAVED;i++) {
 			lambda[i] = 5;
 			ilrate[i]= ((i/5+1)*10);
 			dur[i]=9e3f;
 			pathsv[i]=5;
 		}
-		for(int i=0;i<750;i++) {
+		for(int i=0;i<LIKELYHOODS;i++) {
 			p[i]=1.f;
 			lamsav[i]=5;
 			dursav[i]=0.f;
@@ -114,10 +117,9 @@ int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat, 
 
     integer i1 = isave;
     for (int i = 1; i <= i1; ++i) {
-		integer ipath = i;
-		trprob_(&ipath, &lambda[i - 1], &dur[i - 1], &ilrate[i - 1], pin);
-		path_(&ipath, &lambda[i - 1], &dur[i - 1], &ilrate[i - 1],lamsav, dursav, ilrsav);
-		likhd_(*z, *rn, ipath, lambda[i - 1], dur[i - 1], ilrate[i- 1], pin, lkhd);
+		trprob_(i, lambda[i - 1], dur[i - 1], ilrate[i - 1], pin);
+		path_(i, lambda[i - 1], dur[i - 1], ilrate[i - 1],lamsav, dursav, ilrsav);
+		likhd_(z, rn, i, lambda[i - 1], dur[i - 1], ilrate[i- 1], pin, lkhd);
     }
 /* 	HAVING OBTAINED ALL NEW PATHS, COMPUTE: */
 /* 	POSTERIOR PROBABILITY OF EACH NEW PATH(PROBP); */

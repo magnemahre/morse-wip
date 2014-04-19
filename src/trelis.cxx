@@ -174,7 +174,7 @@ L190:
 #ifdef DEBUG
 printf("\nSAME DELAY AS LAST: %d",ltr);
 #endif
-        retstat = transl_(&ltr);
+        retstat = transl_(ltr);
         goto L800;
     }
 
@@ -211,7 +211,7 @@ L350:
 #ifdef DEBUG
 		printf("\nIN REVERSE ORDER: %d",ltr);
 #endif
-		retstat = transl_(&ltr);
+		retstat = transl_(ltr);
     }
     goto L800;
 
@@ -230,7 +230,7 @@ L700:
 #ifdef DEBUG
 printf("\nHIGHEST PROB: %d", ltr);
 #endif
-    retstat = transl_(&ltr);
+    retstat = transl_(ltr);
 /* 	PRUNE AWAY NODES WHICH ARE NOT ON THIS PATH: */
     i1 = isave;
     for (int k = 1; k <= i1; ++k) {

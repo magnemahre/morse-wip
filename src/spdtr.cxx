@@ -25,7 +25,7 @@
 
 
 
-doublereal morse::spdtr_(integer *isrt, integer *ilrt, integer *iselm, integer *ilelm)
+doublereal morse::spdtr_(const integer isrt, const integer ilrt, const integer iselm, const integer ilelm)
 {
     /* System generated locals */
     real ret_val;
@@ -49,11 +49,11 @@ doublereal morse::spdtr_(integer *isrt, integer *ilrt, integer *iselm, integer *
 /* 	IF SAVED ELEMENT AND NEW ELEMENT ARE THE SAME */
 /* 	THEN THERE CAN BE NO SPEED CHANGE: */
 
-    if (*ilelm != *iselm) {
+    if (ilelm != iselm) {
 		goto L100;
     }
     ret_val = 1.f;
-    if (*isrt != 3) {
+    if (isrt != 3) {
 		ret_val = 0.f;
     }
     goto L300;
@@ -61,17 +61,17 @@ doublereal morse::spdtr_(integer *isrt, integer *ilrt, integer *iselm, integer *
 /* 	OTHERWISE, OBTAIN SPEED TRANSITION PROB */
 
 L100:
-    idel = memdel[*iselm-1][*ilelm -1];
-    ind1 = mempr[*iselm -1][*ilelm -1];
+    idel = memdel[iselm-1][ilelm -1];
+    ind1 = mempr[iselm -1][ilelm -1];
     if (ind1 != 0) {
 		goto L200;
     }
     ret_val = 0.f;
     goto L300;
 L200:
-    idelsp = (*isrt - 3) * idel;
-    ret_val = rtrans[ind1-1][*isrt-1];
-    israte = *ilrt + idelsp;
+    idelsp = (isrt - 3) * idel;
+    ret_val = rtrans[ind1-1][isrt-1];
+    israte = ilrt + idelsp;
     if (israte > 60) {
 		ret_val = 0.f;
     }

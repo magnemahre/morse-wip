@@ -25,7 +25,9 @@
 struct TREE {
  int dit,dah; 
  char chr[12]; 
-} tree[] = {	// check  http://en.wikipedia.org/wiki/Morse_code
+};
+
+const struct TREE tree[] = {	// check  http://en.wikipedia.org/wiki/Morse_code
 //dit,dah, chr
  {1,2, "#"},	// null state
  {3,4, "E"}, 	// .
@@ -100,27 +102,23 @@ struct TREE {
 // (c) 2013  AG1LE Mauri Niininen
 //
 //
-int morse::transl_(int *ltr)
+int morse::transl_(const int ltr)
 {
     /* Initialized data */
 
-    static char ispace[2] = " ";
-    static integer spflag = 0;
-    static integer nchar = 0;
+    //static char ispace[2] = " ";
+    //static integer spflag = 0;
+    //static integer nchar = 0;
     static integer lstltr = 0;
     static integer ixlast = 0;
     static integer lstelm = 6;
 
 
-    /* System generated locals */
-    integer i1;
-
-
     /* Local variables */
-    static integer i, ixl, nblank, elmhat;
-    static char ltrout[1];
-	static int curstate = 0;
-	static int newstate = 0;
+    
+    //static char ltrout[1];
+    static int curstate = 0;
+    static int newstate = 0;
 
 
 /* 	 1  2  3  4  5  6  7  8 9 10 11 12 13 14 15 16 */
@@ -137,8 +135,8 @@ int morse::transl_(int *ltr)
 /* 	HAS OCCURED; IF SO LTR IS READY FOR OUTPUT: */
 
     
-	elmhat = ilami[*ltr-1];
-    ixl = ilamx[elmhat - 1];
+    integer elmhat = ilami[ltr-1];
+    integer ixl = ilamx[elmhat - 1];
 
 /* 	NO CHANGE FROM LAST - CONTINUE */
 
@@ -147,7 +145,7 @@ int morse::transl_(int *ltr)
     }
 
 	if (params.print_symbols) { // print received symbols
-		switch (*ltr)
+		switch (ltr)
 		{
 	/* 	 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 */
 	/* 	.^ .~ .w .p -^ -~ -w -p ^. ^- ~. ~- w. w- p. p- */
@@ -220,7 +218,7 @@ int morse::transl_(int *ltr)
 
 	}
 	if (params.print_text) {
-		switch (*ltr)
+		switch (ltr)
 		{
 	/* 	 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 */
 	/* 	.^ .~ .w .p -^ -~ -w -p ^. ^- ~. ~- w. w- p. p- */
@@ -261,7 +259,7 @@ L700:
 	curstate = newstate;
     ixlast = ixl;
     lstelm = elmhat;
-    lstltr = *ltr;
+    lstltr = ltr;
     return newstate;
 
 } /* transl_ */

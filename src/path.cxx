@@ -23,7 +23,7 @@
 #include "bmorse.h"
 
 
-int morse::path_(integer *ip, integer *lambda, real *dur, integer *ilrate, integer *lamsav, real *dursav, integer *ilrsav)
+int morse::path_(const integer ip, const integer lambda, const real dur, const integer ilrate, integer *lamsav, real *dursav, integer *ilrsav)
 {
 /*  PATH COMPUTES THE LTR STATE, DURATION, AND DATA RATE OF */
 /*  EACH NEW PATH EXTENDED TO STATE N */
@@ -54,31 +54,31 @@ int morse::path_(integer *ip, integer *lambda, real *dur, integer *ilrate, integ
 			int n = (i - 1) * 6 + k;
 			
 /*  NEW PATH IDENTITY: */
-			int j = (*ip - 1) * 30 + n;
+			int j = (ip - 1) * 30 + n;
 			
 /*  NEW LTR STATE: */
 
-			if (*lambda == 0) {
+			if (lambda == 0) {
        			    lamsav[j] = 0;
 			    continue;
                         }
 	
-			lamsav[j] = memfcn[*lambda + k * 400 - 401];
+			lamsav[j] = memfcn[lambda + k * 400 - 401];
 			if (lamsav[j] == 0) {
 				continue;
 			}
 
 /*  NEW DURATION: */
 /*  OBTAIN KEYSTATE OF SAVED PATH AND NEW STATE: */
-			int ilelm = ilami[ielmst[*lambda - 1] - 1];
+			int ilelm = ilami[ielmst[lambda - 1] - 1];
 			int ixl = ilamx[ilelm - 1];
 			int ixs = isx[k - 1];
 
 /* CALCULATE DURATION - ADD SAMPLE DURATION 5 ms FOR EACH VALID PATH */
-			dursav[j] = *dur * (1 - ixs - ixl + (ixs << 1) * ixl) + params.sample_duration;
+			dursav[j] = dur * (1 - ixs - ixl + (ixs << 1) * ixl) + params.sample_duration;
 
 /* 	NEW DATA RATE: */
-			ilrsav[j] = *ilrate + (i - 3) * memdel[k-1][ilelm -1];
+			ilrsav[j] = ilrate + (i - 3) * memdel[k-1][ilelm -1];
 	
 			;
 		}
