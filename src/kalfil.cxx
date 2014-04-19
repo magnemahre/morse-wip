@@ -29,20 +29,6 @@ int morse::kalfil_(real *z, integer *ip, real *rn, integer *ilx,
 	integer *ixs, integer *kelem, integer *jnode, integer *israte, real *
 	dur, integer *ilrate, real *pin, real *lkhdj)
 {
-    /* Initialized data */
-
-//    static real pinmin = 1e-4f;
-
-
-    /* System generated locals */
-    real r1;
-
-
-    /* Local variables */
-    static real a, g, qa, hz, pz, zr, phi, pkk, ykk, pest;
-    static real ppred, ypred, pzinv;
-
-
 /*   THIS SUBROUTINE COMPUTES THE ARRAY OF KALMAN FILTER */
 /*   RECURSIONS USED TO DETERMINE THE LIKELIHOODS. */
 
@@ -66,28 +52,30 @@ int morse::kalfil_(real *z, integer *ip, real *rn, integer *ilx,
 /*   IF TRANSITION PROBABILITY IS VERY SMALL, DON'T */
 /*   BOTHER WITH LIKELIHOOD CALCULATION: */
 
-    if (*pin <= 1e-4f) {
+    const float TRANS_PROB_THRESHOLD = 1e-4f;
+    if (*pin <= TRANS_PROB_THRESHOLD) {
 		*lkhdj = 0.f;
 		return 0;
     }
 
 /*   OBTAIN STATE-DEPENDENT MODEL PARAMETERS: */
+    real qa, hz, phi;
     model_(dur, kelem, ilrate, israte, ixs, &phi, &qa, &hz);
 
 /* 	GET PREVIOUS ESTIMATES FOR PATH IP */
 
-    ykk = ykkip[*ip - 1];
-    pkk = pkkip[*ip - 1];
+    real ykk = ykkip[*ip - 1];
+    real pkk = pkkip[*ip - 1];
 
 /*  IMPLEMENT KALMAN FILTER FOR THIS TRANSITION */
 
-    ypred = phi * ykk;
-    ppred = phi * pkk * phi + qa;
-    pz = hz * ppred + *rn;
-    pzinv = 1.f / pz;
-    g = ppred * hz * pzinv;
-    pest = (1.f - g * hz) * ppred;
-    zr = *z - hz * ypred;
+    real ypred = phi * ykk;
+    real ppred = phi * pkk * phi + qa;
+    real pz = hz * ppred + *rn;
+    real pzinv = 1.f / pz;
+    real g = ppred * hz * pzinv;
+    real pest = (1.f - g * hz) * ppred;
+    real zr = *z - hz * ypred;
 
     ykksv[*jnode - 1] = ypred + g * zr;
     pkksv[*jnode - 1] = pest;
@@ -95,7 +83,7 @@ int morse::kalfil_(real *z, integer *ip, real *rn, integer *ilx,
 		ykksv[*jnode - 1] = .01f;
     }
 /* Computing 2nd power */
-    a = .5f*pzinv*(zr * zr);
+    real a = .5f*pzinv*(zr * zr);
     if (a > 1e3f) {
 		*lkhdj = 0.;
 		return 0;
