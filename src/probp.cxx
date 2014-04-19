@@ -25,12 +25,8 @@
 
 int morse::probp_(real *p, real *pin, integer *isave, real *lkhd)
 {
-    /* System generated locals */
-    integer i1;
-
     /* Local variables */
-	integer i, j, n, ni;
-	real pmax, psav[750], psum;
+    real psav[750];
 
 
 /* 		PROBP COMPUTES THE POSTERIOR PROBABILITY OF EACH NEW PATH */
@@ -48,33 +44,31 @@ int morse::probp_(real *p, real *pin, integer *isave, real *lkhd)
     --p;
 
     /* Function Body */
-    pmax = 0.f;
-    psum = 0.f;
+    real pmax = 0.f;
+    real psum = 0.f;
 /* 	FOR EACH SAVED PATH, EACH TRANSITION: */
-    i1 = *isave;
-    for (i = 1; i <= i1; ++i) {
-		for (n = 1; n <= 30; ++n) {
+    integer i1 = *isave;
+    for (int i = 1; i <= i1; ++i) {
+		for (int n = 1; n <= 30; ++n) {
 	/* 		COMPUTE IDENTITY OF NEW PATH: */
-			j = (i - 1) * 30 + n;
+			int j = (i - 1) * 30 + n;
 	/*      PRODUCT OF PROBS, ADD TO PSUM */
 			psav[j - 1] = p[i] * pin[i + n * 25] * lkhd[j];
 			psum += psav[j - 1];
 			if (psav[j - 1] <= pmax) {
-			goto L100;
+                            continue;
 			}
 			pmax = psav[j - 1];
-L100:
-			;
 		}
     }
 /* 	NORMALIZE TO GET PROBABILITIES; SAVE: */
-    ni = *isave * 30;
+    int ni = *isave * 30;
     i1 = ni;
     if (psum ==0.0) {
     	printf("\nprobp: psum = 0");
     	return 0;
     }
-    for (j = 1; j <= i1; ++j) {
+    for (int j = 1; j <= i1; ++j) {
 		p[j] = psav[j - 1] / psum;
 	}
     return 0;
