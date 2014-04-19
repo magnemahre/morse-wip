@@ -26,7 +26,7 @@
 //#define DEBUG 1
 
 
-int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *imax, integer *ipmax)
+int morse::trelis_(const integer isave, integer *pathsv, integer *lambda, const integer imax, integer *ipmax)
 {
     /* Initialized data */
 
@@ -93,14 +93,14 @@ int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *im
 		printf("\nAVG # OF PATHS SAVED:%4.2f,AVG DECODE DELAY:%4.2f)", xsavg, xdlavg);
 		printf("\nPERCENT OF TIME PATHS = 25: %3.2f, PERCENT OF TIME DELAY = 200: %3.2f", xmmax, xnmax);
     }
-    xsavg = (xsavg * (ncall - 1) + *isave) / ncall;
+    xsavg = (xsavg * (ncall - 1) + isave) / ncall;
     xdlavg = (xdlavg * (ncall - 1) + ndel) / ncall;
     if (ndel == ndelay) {
 		++nmax;
 		xnmax = (real) nmax;
 		xnmax /= ncall;
     }
-    if (*isave == 25) {
+    if (isave == 25) {
 		++mmax;
 		xmmax = (real) mmax;
 		xmmax /= ncall;
@@ -112,7 +112,7 @@ int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *im
     if (n == ndelay + 1) {
 		n = 1;
     }
-    i1 = *isave;
+    i1 = isave;
     for (int i = 1; i <= i1; ++i) {
 //		pthtrl[n + i * NDELAY-NDELAY-1] = pathsv[i];
 		pthtrl[i-1][n-1] = pathsv[i];
@@ -123,7 +123,7 @@ int morse::trelis_(integer *isave, integer *pathsv, integer *lambda, integer *im
 
 /* 	PERFORM DYNAMIC PROGRAM ROUTINE TO FIND CONVERGENT PATH: */
     k = 0;
-    i1 = *isave;
+    i1 = isave;
     for (int i = 1; i <= i1; ++i) {
 		ipnod[i - 1] = i;
     }
@@ -134,7 +134,7 @@ L190:
     }
 
 /* 	IF IP EQUALS INDEX OF HIGHEST PROBABILITY NODE, STORE NODE TO IPMAX */
-    i1 = *isave;
+    i1 = isave;
     for (int ip = 1; ip <= i1; ++ip) {
 		int i = n - k + 1;
 		if (i <= 0) {
@@ -142,13 +142,13 @@ L190:
 		}
 //		ipnod[ip - 1] = pthtrl[i + ipnod[ip - 1] * NDELAY-NDELAY-1];
 		ipnod[ip - 1] = pthtrl[ipnod[ip - 1]-1][i-1];
-		if (ip == *imax) {
+		if (ip == imax) {
 			*ipmax = ipnod[ip - 1];
 		}
     }
 
 /* 	IF ALL NODES ARE EQUAL,THEN PATHS CONVERGE: */
-    i1 = *isave;
+    i1 = isave;
     for (int ieq = 2; ieq <= i1; ++ieq) {
 		if (ipnod[0] != ipnod[ieq - 1]) {
 			goto L190;
@@ -232,7 +232,7 @@ printf("\nHIGHEST PROB: %d", ltr);
 #endif
     retstat = transl_(&ltr);
 /* 	PRUNE AWAY NODES WHICH ARE NOT ON THIS PATH: */
-    i1 = *isave;
+    i1 = isave;
     for (int k = 1; k <= i1; ++k) {
 		if (ipnod[k - 1] != *ipmax) {
 			lambda[k] = 0;

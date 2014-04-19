@@ -28,14 +28,8 @@ int morse::likhd_(real *z, real *rn, integer *ip, integer *lambda,
 {
  
     /* Local variables */
-    static integer i, j, k, n;
-    static real pin;
-    static integer ilx, ixs;
     static real lkhdj;
-    static integer kelem;
  
-    static integer israte;
-
 
 
 /* 	THIS SUBROUTINE CALCULATES,FOR EACH PATH */
@@ -63,19 +57,19 @@ int morse::likhd_(real *z, real *rn, integer *ip, integer *lambda,
 
     /* Function Body */
     if (*lambda != 0) {
-        kelem = ilami[ielmst[*lambda - 1] - 1];
-        ilx = ilamx[kelem - 1];
+        integer kelem = ilami[ielmst[*lambda - 1] - 1];
+        integer ilx = ilamx[kelem - 1];
 /* 	FOR EACH STATE: */
-        for (k = 1; k <= 6; ++k) {
-		for (i = 1; i <= 5; ++i) {
+        for (int k = 1; k <= 6; ++k) {
+		for (int i = 1; i <= 5; ++i) {
 /* 	OBTAIN KEYSTATE, RATE STATE, STATE N, NEW NODE: */
-			ixs = isx[k - 1];
-			israte = i;
-			n = (i - 1) * 6 + k;
-			j = (*ip - 1) * 30 + n;
-			pin = p[*ip + n * 25];
+			integer ixs = isx[k - 1];
+			integer israte = i;
+			integer n = (i - 1) * 6 + k;
+			integer j = (*ip - 1) * 30 + n;
+			real pin = p[*ip + n * 25];
 /* 	COMPUTE AND STORE LIKELIHOOD: */
-			kalfil_(z, ip, rn, &ilx, &ixs, &kelem, &j, &israte, dur, ilrate,&pin, &lkhdj);
+			kalfil_(z, *ip, *rn, ixs, kelem, j, *dur, *ilrate,&pin, &lkhdj);
 			lkhd[j] = lkhdj;
 //			goto L100;
 			if (pin > 1e-6f) {

@@ -22,7 +22,7 @@
 
 #include "bmorse.h"
 
-int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat,  real *spdhat, integer *imax, real *	pmax, int spd)
+int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat,  real *spdhat, integer *imax, real *pmax, int spd)
 {
     /* Initialized data */
 
@@ -39,16 +39,12 @@ int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat, 
     static integer ilrsav[750];
     static real pin[750]	/* was [25][30] */, lkhd[750];
 
-    /* System generated locals */
-    integer i1;
 
     /* Local variables */
 //    static real pin[30][25];		// N: 5 spd x 6 morse element states I: 25 paths  - transition probability from path I to state N 
 //    static real lkhd[30][25];		// 5 speeds x 6 morse element states x 25 paths = 750 likelyhoods 
     
-    static integer i, retstat;
-    static real pelm;
-    static integer ipath;
+    static real pelm = 0;
     static integer ipmax;
     static int init =1;
  
@@ -101,13 +97,13 @@ int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat, 
 
 
 	if (init) {
-		for(i=0;i<25;i++) {
+		for(int i=0;i<25;i++) {
 			lambda[i] = 5;
 			ilrate[i]= ((i/5+1)*10);
 			dur[i]=9e3f;
 			pathsv[i]=5;
 		}
-		for(i=0;i<750;i++) {
+		for(int i=0;i<750;i++) {
 			p[i]=1.f;
 			lamsav[i]=5;
 			dursav[i]=0.f;
@@ -116,9 +112,9 @@ int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat, 
 		init = 0;
 	}
 
-    i1 = isave;
-    for (i = 1; i <= i1; ++i) {
-		ipath = i;
+    integer i1 = isave;
+    for (int i = 1; i <= i1; ++i) {
+		integer ipath = i;
 		trprob_(&ipath, &lambda[i - 1], &dur[i - 1], &ilrate[i - 1], pin);
 		path_(&ipath, &lambda[i - 1], &dur[i - 1], &ilrate[i - 1],lamsav, dursav, ilrsav);
 		likhd_(z, rn, &ipath, &lambda[i - 1], &dur[i - 1], &ilrate[i- 1], pin, lkhd);
@@ -142,7 +138,7 @@ int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat, 
 /* 	UPDATE TRELLIS WITH NEW SAVED NODES, AND */
 /* 	OBTAIN LETTER STATE ESTIMATE: */
 
-    retstat=trelis_(&isave, pathsv, lambda, imax, &ipmax);
+    integer retstat=trelis_(isave, pathsv, lambda, *imax, &ipmax);
 
     return retstat;
 } /* proces_ */

@@ -25,9 +25,9 @@
 #include <stdio.h>
 
 
-int morse::kalfil_(real *z, integer *ip, real *rn, integer *ilx, 
-	integer *ixs, integer *kelem, integer *jnode, integer *israte, real *
-	dur, integer *ilrate, real *pin, real *lkhdj)
+int morse::kalfil_(real *z, const integer ip, const real rn,
+	const integer ixs, const integer kelem, const integer jnode, const real
+	dur, const integer ilrate, real *pin, real *lkhdj)
 {
 /*   THIS SUBROUTINE COMPUTES THE ARRAY OF KALMAN FILTER */
 /*   RECURSIONS USED TO DETERMINE THE LIKELIHOODS. */
@@ -60,27 +60,27 @@ int morse::kalfil_(real *z, integer *ip, real *rn, integer *ilx,
 
 /*   OBTAIN STATE-DEPENDENT MODEL PARAMETERS: */
     real qa, hz, phi;
-    model_(dur, kelem, ilrate, israte, ixs, &phi, &qa, &hz);
+    model_(dur, kelem, ilrate, ixs, &phi, &qa, &hz);
 
 /* 	GET PREVIOUS ESTIMATES FOR PATH IP */
 
-    real ykk = ykkip[*ip - 1];
-    real pkk = pkkip[*ip - 1];
+    real ykk = ykkip[ip - 1];
+    real pkk = pkkip[ip - 1];
 
 /*  IMPLEMENT KALMAN FILTER FOR THIS TRANSITION */
 
     real ypred = phi * ykk;
     real ppred = phi * pkk * phi + qa;
-    real pz = hz * ppred + *rn;
+    real pz = hz * ppred + rn;
     real pzinv = 1.f / pz;
     real g = ppred * hz * pzinv;
     real pest = (1.f - g * hz) * ppred;
     real zr = *z - hz * ypred;
 
-    ykksv[*jnode - 1] = ypred + g * zr;
-    pkksv[*jnode - 1] = pest;
-    if (ykksv[*jnode - 1] <= .01f) {
-		ykksv[*jnode - 1] = .01f;
+    ykksv[jnode - 1] = ypred + g * zr;
+    pkksv[jnode - 1] = pest;
+    if (ykksv[jnode - 1] <= .01f) {
+		ykksv[jnode - 1] = .01f;
     }
 /* Computing 2nd power */
     real a = .5f*pzinv*(zr * zr);

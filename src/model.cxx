@@ -30,7 +30,7 @@
 
 static doublereal c_b5 = 10.;
 
-int morse::model_(real *dur, integer *ielm, integer *ilr, integer *isr, integer *ixs, real *phi, real *qa, real *hz)
+int morse::model_(const real dur, const integer ielm, const integer ilr, const integer ixs, real *phi, real *qa, real *hz)
 {
     /* System generated locals */
     doublereal d1;
@@ -54,22 +54,22 @@ int morse::model_(real *dur, integer *ielm, integer *ilr, integer *isr, integer 
 /* 		HZ-	OUTPUT MEASUREMENT MATRIX VALUE */
 
 /* 	COMPUTE MEASUREMENT COEFFICIENT: */
-    *hz = (real) (*ixs);
+    *hz = (real) ixs;
     
 /* 	COMPUTE PHI AND AMPLITUDE STATE VARIANCE (Q): */
-    r1 = 1200.f / *ilr;
-    bauds = *dur / r1;
+    r1 = 1200.f / ilr;
+    bauds = dur / r1;
     if (bauds >= 14.f) {
 		bauds = 14.f;
     }
 
-    if (*ielm < 3) {
+    if (ielm < 3) {
 		*qa = 1e-4f;
 		*phi = 1.f;
 		return 0;
     }
 
-    if (*ixs != 0) {
+    if (ixs != 0) {
 		*phi = 1.f;
 		*qa = exp((bauds - 14.f) * .6f) * .15f;
 		*qa += bauds * .01f * exp((1.f - bauds) * .2f);

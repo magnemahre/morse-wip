@@ -30,14 +30,14 @@ int morse::savep_(real *p, integer *pathsv, integer *isave, integer
 {
     /* Initialized data */
 
-	real popt = .9f;
+    const real popt = .9f;
 
     /* System generated locals */
-    integer i1, i2;
+    //integer i2;
 
     /* Local variables */
-	integer i, j, k, n, ip, jsav, nsav;
-    real psav[25], psum;
+
+    real psav[25];
 	integer iconv[25], ipsav, isavm1, nplus1;
 
 
@@ -84,15 +84,16 @@ int morse::savep_(real *p, integer *pathsv, integer *isave, integer
     --p;
 
     /* Function Body */
-    nsav = 0;
-    psum = 0.f;
+    integer nsav = 0;
+    real psum = 0.f;
 /* 	SELECT SIX HIGHEST PROB ELEMENT STATE NODES: */
-    for (k = 1; k <= 6; ++k) {
+    for (int k = 1; k <= 6; ++k) {
 		*pmax = 0.f;
-		i1 = *isave;
-		for (ip = 1; ip <= i1; ++ip) {
-			for (i = 1; i <= 5; ++i) {
-				j = (ip - 1) * 30 + (i - 1) * 6 + k;
+		integer i1 = *isave;
+                integer jsav;
+		for (int ip = 1; ip <= i1; ++ip) {
+			for (int i = 1; i <= 5; ++i) {
+				int j = (ip - 1) * 30 + (i - 1) * 6 + k;
 				if (p[j] >= *pmax) {
 					*pmax = p[j];
 					jsav = j;
@@ -111,14 +112,15 @@ int morse::savep_(real *p, integer *pathsv, integer *isave, integer
     }
 /* 	SELECT ENOUGH ADDITIONAL NODES TO MAKE TOTAL */
 /* 	PROBABILITY SAVED EQUAL TO POPT, OR A MAX OF 25: */
+        int jsav;
 	do {
 		*pmax = 0.f;
-		i1 = *isave;
-		for (ip = 1; ip <= i1; ++ip) {
-			for (n = 1; n <= 30; ++n) {
-				j = (ip - 1) * 30 + n;
-				i2 = nsav;
-				for (i = 1; i <= i2; ++i) {
+		integer i1 = *isave;
+		for (int ip = 1; ip <= i1; ++ip) {
+			for (int n = 1; n <= 30; ++n) {
+				int j = (ip - 1) * 30 + n;
+				integer i2 = nsav;
+				for (int i = 1; i <= i2; ++i) {
 					if (j == sort[i]) {
 						goto L500;
 					}
@@ -151,8 +153,8 @@ int morse::savep_(real *p, integer *pathsv, integer *isave, integer
     	return 0;
     }
 
-    i1 = *isave;
-    for (i = 1; i <= i1; ++i) {
+    integer i1 = *isave;
+    for (int i = 1; i <= i1; ++i) {
 		p[i] = psav[i - 1] / psum;
 		lambda[i] = lamsav[sort[i]];
 		dur[i] = dursav[sort[i]];
@@ -161,38 +163,36 @@ int morse::savep_(real *p, integer *pathsv, integer *isave, integer
 		pkkip[i - 1] = pkksv[sort[i] - 1];
     }
     i1 = *isave;
-    for (i = 1; i <= i1; ++i) {
+    for (int i = 1; i <= i1; ++i) {
 		iconv[i - 1] = 1;
     }
     isavm1 = *isave - 1;
     i1 = isavm1;
-    for (n = 1; n <= i1; ++n) {
+    for (int n = 1; n <= i1; ++n) {
 		if (iconv[n - 1] != 0) {
 			nplus1 = n + 1;
-			i2 = *isave;
-			for (k = nplus1; k <= i2; ++k) {
+			integer i2 = *isave;
+			for (int k = nplus1; k <= i2; ++k) {
 				if (iconv[k - 1] == 0) {
-					goto L810;
+					continue;
 				}
 				if (ilrate[k] != ilrate[n]) {
-					goto L810;
+					continue;
 				}
 				if (dur[k] != dur[n]) {
-					goto L810;
+					continue;
 				}
 				if (lambda[k] != lambda[n]) {
-					goto L810;
+					continue;
 				}
 				iconv[k - 1] = 0;
-		L810:
-				;
 			}
 		}
     }
     psum = 0.f;
-    n = 1;
+    int n = 1;
     i1 = *isave;
-    for (i = 2; i <= i1; ++i) {
+    for (int i = 2; i <= i1; ++i) {
 		if (iconv[i - 1] != 0) {
 			++n;
 			lambda[n] = lambda[i];
@@ -215,7 +215,7 @@ int morse::savep_(real *p, integer *pathsv, integer *isave, integer
     *isave = n;
     *pmax = 0.f;
     i1 = *isave;
-    for (i = 1; i <= i1; ++i) {
+    for (int i = 1; i <= i1; ++i) {
 		p[i] /= psum;
 		if (p[i] > *pmax) {
 			*pmax = p[i];

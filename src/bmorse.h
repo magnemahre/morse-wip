@@ -65,14 +65,14 @@ protected:
 	int ptrans_(integer *kelem, integer *irate, integer *lambda, integer *ilrate, real *ptrx, real *psum, real *pin, integer *n);
 	int trprob_(integer *ip, integer *lambda, real *dur, integer *ilrate, real *p);
 	int transl_(int *ltr);
-	int trelis_(integer *isave, integer *pathsv, integer *lambda, integer *imax, integer *ipmax);
-	int kalfil_(real *z, integer *ip, real *rn, integer *ilx, 
-		integer *ixs, integer *kelem, integer *jnode, integer *israte, real *
-		dur, integer *ilrate, real *pin, real *lkhdj);
+	int trelis_(const integer isave, integer *pathsv, integer *lambda, const integer imax, integer *ipmax);
+        int kalfil_(real *z, const integer ip, const real rn,
+            const integer ixs, const integer kelem, const integer jnode, 
+            const real dur, const integer ilrate, real *pin, real *lkhdj);
 	int savep_(real *p, integer *pathsv, integer *isave, integer 
 		*imax, integer *lamsav, real *dursav, integer *ilrsav, integer *
 		lambda, real *dur, integer *ilrate, integer *sort, real *pmax);
-	int model_(real *, integer *, integer *, integer *, integer *, real *, real *, real *);
+	int model_(const real dur, const integer , const integer, const integer , real *, real *, real *);
 	int probp_(real *, real *, integer *, real *);
 	int  sprob_(real *, integer *, integer *, real *, integer *, real *, real *);
 	doublereal xtrans_(integer *, real *, integer *);
