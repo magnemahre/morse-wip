@@ -27,17 +27,9 @@ doublereal morse::xtrans_(integer *ielem, real *d0, integer *irate)
 {
     /* Initialized data */
 
-    static integer kimap[6] = { 1,3,1,3,7,14 };
-    static real aparm[3] = { 3.f,1.5f,1.f };
+    const static integer kimap[6] = { 1,3,1,3,7,14 };
+    const static real aparm[3] = { 3.f,1.5f,1.f };
 
-    /* System generated locals */
-    real ret_val;
-
-
-    /* Local variables */
-    static real b0, b1, p0, p1, alpha;
-    static integer mscale;
-    static real rscale;
 
 /* 	THIS FUNCTION IMPLEMENTS THE CALCULATION OF KEYSTATE */
 /* 	TRANSITION PROBABILITY, CONDITIONED ON ELEMENT TYPE, */
@@ -51,11 +43,12 @@ doublereal morse::xtrans_(integer *ielem, real *d0, integer *irate)
 
 /* 	SCALE DURATION AND OBTAIN DENSITY PARAMETER: */
 
-    mscale = kimap[(0 + (0 + ((*ielem - 1) << 2))) / 4];
-    rscale = 1200.f / *irate;
-    b0 = *d0 / (mscale * rscale);
-    b1 = (*d0 + 5.f) / (mscale * rscale);
+    int mscale = kimap[(0 + (0 + ((*ielem - 1) << 2))) / 4];
+    real rscale = 1200.f / *irate;
+    real b0 = *d0 / (mscale * rscale);
+    real b1 = (*d0 + 5.f) / (mscale * rscale);
     
+    real alpha;
     switch (*ielem) {
     case 6:
 	    alpha = aparm[2] * 14.f;
@@ -68,19 +61,19 @@ doublereal morse::xtrans_(integer *ielem, real *d0, integer *irate)
     }
 
     if (b1 <= 1.f) {
-		p1 = 1.f - exp(alpha * (b1 - 1.f)) * .5f;
-		p0 = 1.f - exp(alpha * (b0 - 1.f)) * .5f;
-		ret_val = p1 / p0;
+		real p1 = 1.f - exp(alpha * (b1 - 1.f)) * .5f;
+		real p0 = 1.f - exp(alpha * (b0 - 1.f)) * .5f;
+		real ret_val = p1 / p0;
 	    return ret_val;
     }
     if (b0 < 1.f && b1 > 1.f) {
-		p1 = exp(-alpha * (b1 - 1.f)) * -.5f;
-		p0 = 1.f - exp(alpha * (b0 - 1.f)) * .5f;
-		ret_val = p1 / p0;
+		real p1 = exp(-alpha * (b1 - 1.f)) * -.5f;
+		real p0 = 1.f - exp(alpha * (b0 - 1.f)) * .5f;
+		real ret_val = p1 / p0;
 	    return ret_val;
     }
 
-    ret_val = exp(-alpha * (b1 - b0));
+    real ret_val = exp(-alpha * (b1 - b0));
     return ret_val;
 } /* xtrans_ */
 
