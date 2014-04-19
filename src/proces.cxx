@@ -117,7 +117,7 @@ int morse::proces_(real *z, real *rn, integer *xhat, real *px, integer *elmhat, 
 		integer ipath = i;
 		trprob_(&ipath, &lambda[i - 1], &dur[i - 1], &ilrate[i - 1], pin);
 		path_(&ipath, &lambda[i - 1], &dur[i - 1], &ilrate[i - 1],lamsav, dursav, ilrsav);
-		likhd_(z, rn, &ipath, &lambda[i - 1], &dur[i - 1], &ilrate[i- 1], pin, lkhd);
+		likhd_(*z, *rn, ipath, lambda[i - 1], dur[i - 1], ilrate[i- 1], pin, lkhd);
     }
 /* 	HAVING OBTAINED ALL NEW PATHS, COMPUTE: */
 /* 	POSTERIOR PROBABILITY OF EACH NEW PATH(PROBP); */

@@ -28,16 +28,10 @@
 
 /* Table of constant values */
 
-static doublereal c_b5 = 10.;
+//static doublereal c_b5 = 10.;
 
 int morse::model_(const real dur, const integer ielm, const integer ilr, const integer ixs, real *phi, real *qa, real *hz)
 {
-    /* System generated locals */
-    doublereal d1;
-
-    /* Local variables */
-    real r1, bauds, xsamp;
-
 
 /* 	THIS SUBROUTINE COMPUTES THE PARAMETERS OF THE */
 /* 	OBSERVATION STATE TRANSITION MATRIX PHI, THE */
@@ -57,8 +51,8 @@ int morse::model_(const real dur, const integer ielm, const integer ilr, const i
     *hz = (real) ixs;
     
 /* 	COMPUTE PHI AND AMPLITUDE STATE VARIANCE (Q): */
-    r1 = 1200.f / ilr;
-    bauds = dur / r1;
+    real r1 = 1200.f / ilr;
+    real bauds = dur / r1;
     if (bauds >= 14.f) {
 		bauds = 14.f;
     }
@@ -76,8 +70,8 @@ int morse::model_(const real dur, const integer ielm, const integer ilr, const i
 		return 0;
     }
 
-    xsamp = r1 * 22.4f;
-    d1 = (doublereal) (-2 / xsamp);
+    real xsamp = r1 * 22.4f;
+    doublereal d1 = (doublereal) (-2 / xsamp);
     *phi = pow(10.0, d1);
 
     if (bauds >= 14.f) {

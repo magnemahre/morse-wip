@@ -23,8 +23,8 @@
 #include "bmorse.h"
 #include <stdio.h>
 
-int morse::likhd_(real *z, real *rn, integer *ip, integer *lambda,
-	 real *dur, integer *ilrate, real *p, real *lkhd)
+int morse::likhd_(const real z, const real rn, const integer ip, const integer lambda,
+	 const real dur, const integer ilrate, real *p, real *lkhd)
 {
  
     /* Local variables */
@@ -56,8 +56,8 @@ int morse::likhd_(real *z, real *rn, integer *ip, integer *lambda,
     p -= 26;
 
     /* Function Body */
-    if (*lambda != 0) {
-        integer kelem = ilami[ielmst[*lambda - 1] - 1];
+    if (lambda != 0) {
+        integer kelem = ilami[ielmst[lambda - 1] - 1];
         integer ilx = ilamx[kelem - 1];
 /* 	FOR EACH STATE: */
         for (int k = 1; k <= 6; ++k) {
@@ -66,10 +66,10 @@ int morse::likhd_(real *z, real *rn, integer *ip, integer *lambda,
 			integer ixs = isx[k - 1];
 			integer israte = i;
 			integer n = (i - 1) * 6 + k;
-			integer j = (*ip - 1) * 30 + n;
-			real pin = p[*ip + n * 25];
+			integer j = (ip - 1) * 30 + n;
+			real pin = p[ip + n * 25];
 /* 	COMPUTE AND STORE LIKELIHOOD: */
-			kalfil_(z, *ip, *rn, ixs, kelem, j, *dur, *ilrate,&pin, &lkhdj);
+			kalfil_(z, ip, rn, ixs, kelem, j, dur, ilrate,&pin, &lkhdj);
 			lkhd[j] = lkhdj;
 //			goto L100;
 			if (pin > 1e-6f) {

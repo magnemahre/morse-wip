@@ -59,14 +59,14 @@ extern PARAMS params;
 class morse {
 protected:
 	int initl_(void);
-	int likhd_(real *z, real *rn, integer *ip, integer *lambda, real *dur, integer *ilrate, real *p, real *lkhd);
+	int likhd_(const real z, const real rn, const integer ip, const integer lambda, const real dur, const integer ilrate, real *p, real *lkhd);
 	int path_(integer *ip, integer *lambda, real *dur, integer *ilrate, integer *lamsav, real *dursav, integer *ilrsav);
 	doublereal spdtr_(integer *isrt, integer *ilrt, integer *iselm, integer *ilelm);
 	int ptrans_(integer *kelem, integer *irate, integer *lambda, integer *ilrate, real *ptrx, real *psum, real *pin, integer *n);
 	int trprob_(integer *ip, integer *lambda, real *dur, integer *ilrate, real *p);
 	int transl_(int *ltr);
 	int trelis_(const integer isave, integer *pathsv, integer *lambda, const integer imax, integer *ipmax);
-        int kalfil_(real *z, const integer ip, const real rn,
+        int kalfil_(const real z, const integer ip, const real rn,
             const integer ixs, const integer kelem, const integer jnode, 
             const real dur, const integer ilrate, real *pin, real *lkhdj);
 	int savep_(real *p, integer *pathsv, integer *isave, integer 

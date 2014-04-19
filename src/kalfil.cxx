@@ -25,7 +25,7 @@
 #include <stdio.h>
 
 
-int morse::kalfil_(real *z, const integer ip, const real rn,
+int morse::kalfil_(const real z, const integer ip, const real rn,
 	const integer ixs, const integer kelem, const integer jnode, const real
 	dur, const integer ilrate, real *pin, real *lkhdj)
 {
@@ -75,7 +75,7 @@ int morse::kalfil_(real *z, const integer ip, const real rn,
     real pzinv = 1.f / pz;
     real g = ppred * hz * pzinv;
     real pest = (1.f - g * hz) * ppred;
-    real zr = *z - hz * ypred;
+    real zr = z - hz * ypred;
 
     ykksv[jnode - 1] = ypred + g * zr;
     pkksv[jnode - 1] = pest;
