@@ -522,7 +522,8 @@ decode_sndfile (SNDFILE *infile, SF_INFO info)
 			FFT_filter = new fftfilt((params.speed*20)/(1.2 * params.sample_rate), FilterFFTLen);
 		  
 			/* Allocate space for the data to be read, then read it. */
-			buf = (double *) malloc(num_items*sizeof(double));
+			double *bufptr = (double *) malloc(num_items*sizeof(double));
+                        double *buf = bufptr;
 			if (buf == 0) {
 				printf ("%s : line %d :out of memory.\n", __FILE__, __LINE__) ;
 				exit (1) ;
@@ -533,22 +534,10 @@ decode_sndfile (SNDFILE *infile, SF_INFO info)
 
 			for (i = 0; i < num; i += 512){
 					
-					rx_FFTprocess(buf, 512);
-					buf += 512; 
-					
-/*					
-					if (x < 0)  x = -x;
-					x = filter(x,bfv);   					
-					sc++;
-					if ((sc % dec_ratio)==0) {   // 48 kHz to 200 Hz - decimate samples by 240
-
-     	
-
-						process_data(x);
-*/
-		
+                            rx_FFTprocess(buf, 512);
+                            buf += 512; 		
 			}
-			free(buf); 
+			free(bufptr); 
 	}
 	 
 
