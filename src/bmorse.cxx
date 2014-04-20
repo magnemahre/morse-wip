@@ -299,9 +299,9 @@ static void interp_spec (float * mag, int maglen, const double *spec, int specle
 
 void process_data(double x)
 {
-	static integer sample_counter = 0;
+	//static integer sample_counter = 0;
 	static real rn = .1f;
-	static integer retstat, n1, n2, imax, xhat, elmhat;
+	static integer imax, xhat, elmhat;
 	static real pmax, zout, spdhat, px;
 	static int init = 1; 
 	static double agc_peak = 0.1;
@@ -342,7 +342,7 @@ void process_data(double x)
 //	if (zout > 1.0) zout = 1.0; 
 //	if (zout < 0.0) zout = 0.0;
 	
-	retstat = mp->proces_(zout, rn, &xhat, &px, &elmhat, &spdhat, &imax, &pmax);
+	int retstat = mp->proces_(zout, rn, &xhat, &px, &elmhat, &spdhat, &imax, &pmax);
 	if (params.print_variables) 
 		printf("\n%d\t%d\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f",(int)retstat,(int)imax,(int)elmhat,(int)xhat,x,px,pmax,spdhat,rn,zout); 
 	
@@ -548,7 +548,7 @@ decode_sndfile (SNDFILE *infile, SF_INFO info)
 */
 		
 			}
-			//free(buf); 
+			free(buf); 
 	}
 	 
 
